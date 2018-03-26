@@ -1,80 +1,84 @@
 var mongoose = require('mongoose');
+
 var allocationSchema = new mongoose.Schema({
 
+  //sma email
   allocatedBy: {
-    type: String,
-    //required: true,
-
+    type: String
+    //required: true
   },
+  //sra email
   allocatedTo: {
-    type: String,
-    //required:true,
-
+    type: String
+    //required:true
   },
   /*
-  allocatedOn:{
-    type:Date,
-    default:Date.now
-  },
+    receiverType: {
+      type: String,
+      default: "sra"
+      //required:true,
+    },
   */
-
-  receiverType: {
-    type: String,
-    default: "sra"
-    //required:true,
+  //status of work
+  status: {
+    type: Number
+    //srequired:true
   },
-  status:{
-    type:Number,
-    require:true
-  },
-  
   complaintId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'complaint'
-    //required:true,
+    //required:true
   },
   estimatedTime: {
     type: Number
+    //required: true
   },
-
-},{timestamps: true});
-
+}, {
+  timestamps: true
+});
 
 var Allocation = module.exports = mongoose.model('Allocation', allocationSchema);
 
-module.exports.assignToSRA = function(complaintId,sraId, smaId) {
+//for assigning work to sra
+module.exports.assignToSRA = function (complaintId, sraId, smaId) {
 
-var allocation = new Allocation({
-  complaintId: complaintId,
-  allocatedBy: smaId,
-  allocatedTo: sraId
-});
-    return allocation.save();
+  var allocation = new Allocation({
+    complaintId: complaintId,
+    allocatedBy: smaId,
+    allocatedTo: sraId
+  });
+  return allocation.save();
 };
 
-module.exports.getComplaintId = function(sraId) {
-  console.log(sraId);
-  return Allocation.findOne().where({'allocatedTo' : sraId});
-
+//for sra to get complaint details
+module.exports.getComplaintId = function (sraId) {
+  return Allocation.findOne({
+    'allocatedTo': sraId
+  });
 };
 
-module.exports.putAllocation=function(complaintId,estimatedTime){
-  console.log(estimatedTime);
-  return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{estimatedTime:estimatedTime}},{new: true});
+//for sra to send estimated time
+module.exports.updateEstimatedTime = function (complaintId, estimatedTime) {
+  return Allocation.findOneAndUpdate({
+    complaintId: complaintId
+  }, {
+    $set: {
+      estimatedTime: estimatedTime
+    }
+  }, {
+    new: true
+  });
 };
 
-module.exports.putAllocationStatus=function(complaintId,status){
-  //console.log(estimatedTime);
-  return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{status: status}},{new: true});
+//for sra to send completion response
+module.exports.updateCompletionStatus = function (complaintId, status) {
+  return Allocation.findOneAndUpdate({
+    complaintId: complaintId
+  }, {
+    $set: {
+      status: status
+    }
+  }, {
+    new: true
+  });
 };
-/*
-module.exports.putAllocation=function(complaintId,estimatedtime){
-  console.log(estimatedtime);
-  
-  //return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{estimatedtime:estimatedtime}},{new: true});
-};
-*/
-
-//module.exports.getAllocByCompId=function(complaintId){
-//return  Allocation.findOne({complaintId:complaintId});
-//};

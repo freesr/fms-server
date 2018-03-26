@@ -1,46 +1,40 @@
-
 var mongoose = require('mongoose');
 
-//creating updates schema
-//include photo
-var repairProgressSchema = new  mongoose.Schema({
+var repairProgressSchema = new mongoose.Schema({
+    complaintId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'complaint'
+        //required:true
+    },
     description: {
         type: String,
         //required: true,
-
     },
     filesPath: {
         type: String,
         //required:true
     },
-    /*
-    updatedOn:{
-      type:Date,
-      default:Date.now
-    },
-    */
-    sentTo:{
-      type:String,
+    sentTo: {
+        type: String,
         //required:true
     },
-    status:{
-      type:Number,
+    status: {
+        type: Number,
         //required:true
     },
-   
+}, {
+    timestamps: true
+});
 
-},{timestamps:true});
 var RepairProgress = module.exports = mongoose.model('RepairProgress', repairProgressSchema);
 
-//for adding updates to updates collection
-
-
-//for submitting updates to sma
-module.exports.getUpdates = function(callback) {
-    Update.find(callback);
+//for getting updates for sma
+module.exports.getUpdates = function (complaintId) {
+    return RepairProgress.find({complaintId: complaintId});
 };
 
-module.exports.addRepairProgress=function(newRepairProgress)
-{
-  return newRepairProgress.save();
+//for adding updates by sra
+module.exports.addRepairProgress = function (newRepairProgress) {
+    return newRepairProgress.save();
 };
+
