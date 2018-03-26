@@ -11,8 +11,6 @@ var Complaint = require('./../models/complaint');
 var multer = require('multer');
 
 
-
-
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
     callback(null, 'E:/c down/vayufinal/Images2');
@@ -89,23 +87,49 @@ router.route('/user') //for sra to register
     .all(bodyParser.json())
     .put(parseUrlencoded, function(req, res) {
         //description properties
-        var estimatedTime = req.body.estimatedTime;
-        var complaintId = mongoose.Types.ObjectId('5ab75cbb49e85d83fce4d5f4');
-        var status = 2;
-        //image properties
-        var repairProgress = new RepairProgress({
-         estimatedTime: estimatedTime,
-         complaintId: complaintId,
-         status: status
+        var estimatedTime = req.query.estimatedTime;
+        console.log(estimatedTime);
+        var complaintId = mongoose.Types.ObjectId('5ab7abc4a76fd76f540518e3');
+        // Allocation.getAllocByCompId(complaintId)
+        // .then(function(complaintInstance){
+          Allocation.putAllocation(complaintId ,estimatedTime)
+          .then(function(returedvalue){
+            console.log(returedvalue);
+          }).catch(function(err){
+            console.log(err);
+            res.json({
+              error:err
+            });
+          });
+
+        // }).catch(function(err){
+        //   console.log(err);
+        //   res.json({
+        //     error:err
+        //   });
+        // })
+       
+});
+
+router.route('/works/workCompletion') //for sra to send updates
+    .all(bodyParser.json())
+    .put(parseUrlencoded, function(req, res) {
+        //description properties
+        var status = 3;
+        //console.log(estimatedTime);
+        var complaintId = mongoose.Types.ObjectId('5ab7abc4a76fd76f540518e3');
+        // Allocation.getAllocByCompId(complaintId)
+        // .then(function(complaintInstance){
+          Allocation.putAllocationStatus(complaintId ,status)
+          .then(function(returedvalue){
+            console.log(returedvalue);
+          }).catch(function(err){
+            console.log(err);
+            res.json({
+              error:err
+            });
+          });
         });
-
-        RepairProgress.addRepairProgress(repairProgress, (err,repairProgress)=>{
-            if(err) throw(err);
-            console.log(repairProgress);
-        });
-}
-
-
 
 //receiving works from sma
 router.route('/work')

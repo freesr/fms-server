@@ -27,10 +27,7 @@ var repairProgressSchema = new  mongoose.Schema({
       type:Number,
         //required:true
     },
-    estimatedTime:{
-      type:Number,
-      //required:true
-    },
+   
 
 },{timestamps:true});
 var RepairProgress = module.exports = mongoose.model('RepairProgress', repairProgressSchema);

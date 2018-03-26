@@ -23,11 +23,11 @@ var allocationSchema = new mongoose.Schema({
     default: "sra"
     //required:true,
   },
-  /*statusOfAllocation:{
+  status:{
     type:Number,
     require:true
   },
-  */
+  
   complaintId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'complaint'
@@ -57,3 +57,24 @@ module.exports.getComplaintId = function(sraId) {
   return Allocation.findOne().where({'allocatedTo' : sraId});
 
 };
+
+module.exports.putAllocation=function(complaintId,estimatedTime){
+  console.log(estimatedTime);
+  return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{estimatedTime:estimatedTime}},{new: true});
+};
+
+module.exports.putAllocationStatus=function(complaintId,status){
+  //console.log(estimatedTime);
+  return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{status: status}},{new: true});
+};
+/*
+module.exports.putAllocation=function(complaintId,estimatedtime){
+  console.log(estimatedtime);
+  
+  //return Allocation.findOneAndUpdate({complaintId: complaintId},{$set:{estimatedtime:estimatedtime}},{new: true});
+};
+*/
+
+//module.exports.getAllocByCompId=function(complaintId){
+//return  Allocation.findOne({complaintId:complaintId});
+//};
